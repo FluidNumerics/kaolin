@@ -29,8 +29,6 @@ jobs:
             - os: ubuntu-22.04
               fcompiler: amdflang
               ccompiler: amdclang
-              spack_compiler: rocmcc@=6.1.1
-              spack_os: "ubuntu:22.04"
               shell: bash
               build_type: debug
               memcheck: false
@@ -56,7 +54,6 @@ jobs:
           ${{ matrix.ccompiler }} --version
 
       - name: Build with Cmake
-        shell: spack-bash {0}
         run: |
           export PATH=${PATH}:/opt/rocm/bin
           mkdir build
@@ -69,7 +66,6 @@ jobs:
 
       - name: Run ctests
         run: |
-          export WORKSPACE=/home/runner/work/SELF/SELF/
           ctest --verbose \
                 --output-on-failure \
                 --test-dir ./build/

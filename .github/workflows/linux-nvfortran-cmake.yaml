@@ -69,9 +69,3 @@ jobs:
           ctest --verbose \
                 --output-on-failure \
                 --test-dir ./build/
-
-      - name: Push packages and update index
-        run: |
-          spack -e ./share/spack-env/ mirror set --push --oci-username ${{ github.actor }} --oci-password "${{ secrets.GITHUB_TOKEN }}" local-buildcache
-          spack -e ./share/spack-env/ buildcache push --base-image ${{ matrix.spack_os }} --update-index local-buildcache
-        if: ${{ !cancelled() }}
