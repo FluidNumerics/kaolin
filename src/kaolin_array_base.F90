@@ -1,78 +1,59 @@
 module kaolin_array_base
   use iso_fortran_env
   use iso_c_binding
-  implicit none
-  private
+  use kaolin_device
+  use kaolin_device_enums
 
+  implicit none
+
+  private
   public :: KaolinArray
 
-  enum,bind(c)
-    enumerator :: kaolin_memory_host = 0
-    enumerator :: kaolin_memory_device = 1
-    enumerator :: kaolin_memory_distributed_host = 2
-    enumerator :: kaolin_memory_distributed_device = 3
-  endenum
+  type :: KaolinArray(prec,ndim)
+    integer,private,kind :: prec
+    integer,private :: ndim
+    integer,private :: shape(1:ndim)
+    real(kind=prec),pointer :: data(:)
+    type(KaolinDevice),private,pointer :: device
 
-  type :: KaolinArray(prec)
-  integer,kind :: prec
-  integer :: ndim
-  integer,allocatable :: shape(:)
-  real(kind=prec),pointer :: data(:)
-  integer :: mem_space
-contains
-  procedure,public :: is_on_device
-  procedure,public :: get_shape
+    contains
+
+    procedure,public :: init => init_KaolinArray
+
   endtype KaolinArray
-
-  type,extends(KaolinArray) :: KaolinArrayHost
-    ! Add any additional fields or methods specific to host arrays here
-  endtype KaolinArrayHost
-
-  ! Default constructor for KaolinArray
-  interface KaolinArray
-    module procedure Construct_KaolinArray
-  endinterface KaolinArray
-
+  
   contains
 
-  function Construct_KaolinArray(ndim,shape,mem_space) result(this)
-    integer,intent(in) :: ndim
-    integer,intent(in):: shape(:)
-    integer,intent(in) :: mem_space
-    class(KaolinArray) :: this
 
-    allocate(this)
-    this%ndim = ndim
-    allocate(this%shape(ndim))
-    this%shape = shape
-    this%mem_space = mem_space
+  subroutine init_KaolinArray(this,shape,device)
+    class(KaolinArray),intent(inout) :: this
+    integer,dimension(:),intent(in) :: shape
+    type(KaolinDevice),intent(in) :: device
 
-    numel
-    select case(mem_space)
-    case(kaolin_memory_host)
+    if (.not.allocated(shape)) then
+      error stop "Shape must be allocated"
+    end if
+    if (size(shape) == 0) then
+      error stop "Shape must have at least one dimension"
+    end if
+    if (size(shape) .neq. this%ndim) then
+      error stop "Shape must have the same number of dimensions as the array"
+    end if
+
+    this%device => device
+
+    select case(this%device%mem_space)
+    case(kaolin_memory_cpu)
       allocate(this%data(product(shape)))
-    case(kaolin_memory_device)
-      this%data = c_loc(0_c_ptr) ! Placeholder for device memory
-    case(kaolin_memory_distributed_host)
-      this%data = c_loc(0_c_ptr) ! Placeholder for distributed host memory
-    case(kaolin_memory_distributed_device)
-      this%data = c_loc(0_c_ptr) ! Placeholder for distributed device memory
+    case(kaolin_memory_gpu)
+      call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
+    case(kaolin_memory_apu)
+      call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
     case default
       error stop "Invalid memory space"
     endselect
 
-  endfunction Construct_KaolinArray
+  endsubroutine init_KaolinArray
 
-  function is_on_device(this) result(flag)
-    class(KaolinArray),intent(in) :: this
-    logical :: flag
-    flag = this%mem_space == memory_device .or. this%mem_space == memory_distributed_device
-  endfunction
-
-  function get_shape(this) result(s)
-    class(KaolinArray),intent(in) :: this
-    integer,allocatable :: s(:)
-    s = this%shape
-  endfunction
 
 endmodule kaolin_array_base

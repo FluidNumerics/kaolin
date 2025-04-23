@@ -30,13 +30,11 @@ include(CMakePrintHelpers)
 
 # C Language is needed in order to verify Fortran compiler is C-interoperable
 project(KAOLIN VERSION 1.0.0
-	DESCRIPTION "SKaolin - A foundational library for heterogeneous high performance computing in Fortran"
+	DESCRIPTION "Kaolin - A foundational library for heterogeneous high performance computing in Fortran"
 	LANGUAGES Fortran C)
 
 option(KAOLIN_ENABLE_TESTING "Option to enable build of tests. (Default On)"  ON)
 # option(KAOLIN_ENABLE_EXAMPLES "Option to enable build of examples. (Default On)"  ON)
-
-
 
 
 # Fortran compiler requirements
