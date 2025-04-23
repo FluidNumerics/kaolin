@@ -10,35 +10,34 @@ module kaolin_array_base
   public :: KaolinArray
 
   type :: KaolinArray(prec,ndim)
-    integer,private,kind :: prec
-    integer,private :: ndim
-    integer,private :: shape(1:ndim)
-    real(kind=prec),pointer :: data(:)
-    type(KaolinDevice),private,pointer :: device
+  integer,private,kind :: prec
+  integer,private :: ndim
+  integer,private :: shape(1:ndim)
+  real(kind=prec),pointer :: data(:)
+  type(KaolinDevice),private,pointer :: device
 
-    contains
+contains
 
-    procedure,public :: init => init_KaolinArray
+  procedure,public :: init => init_KaolinArray
 
   endtype KaolinArray
-  
-  contains
 
+  contains
 
   subroutine init_KaolinArray(this,shape,device)
     class(KaolinArray),intent(inout) :: this
     integer,dimension(:),intent(in) :: shape
     type(KaolinDevice),intent(in) :: device
 
-    if (.not.allocated(shape)) then
+    if(.not. allocated(shape)) then
       error stop "Shape must be allocated"
-    end if
-    if (size(shape) == 0) then
+    endif
+    if(size(shape) == 0) then
       error stop "Shape must have at least one dimension"
-    end if
-    if (size(shape) .neq. this%ndim) then
+    endif
+    if(size(shape) .neq.this%ndim) then
       error stop "Shape must have the same number of dimensions as the array"
-    end if
+    endif
 
     this%device => device
 
@@ -54,6 +53,5 @@ module kaolin_array_base
     endselect
 
   endsubroutine init_KaolinArray
-
 
 endmodule kaolin_array_base

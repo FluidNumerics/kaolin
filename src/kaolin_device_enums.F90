@@ -47,13 +47,13 @@ module kaolin_device_enums
     enumerator :: kaolin_memory_gpu = 1
     enumerator :: kaolin_memory_apu = 2
   endenum
-    
+
   enum,bind(c)
     enumerator :: kaolin_x86_cpu = 0
     enumerator :: kaolin_amdgpu = 1
     enumerator :: kaolin_nvidiagpu = 2
     enumerator :: kaolin_intelgpu = 3
-    enumerator :: kaolin_amdapu = 4  ! e.g. MI300A or other iGPU
+    enumerator :: kaolin_amdapu = 4 ! e.g. MI300A or other iGPU
   endenum
 
 endmodule kaolin_device_enums
