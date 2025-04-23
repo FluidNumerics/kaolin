@@ -1,4 +1,4 @@
-module kaolin_array_base
+module kaolin_array
   use iso_fortran_env
   use iso_c_binding
   use kaolin_device
@@ -18,13 +18,13 @@ module kaolin_array_base
 
 contains
 
-  procedure,public :: init => init_KaolinArray
+  procedure,public :: create => create_KaolinArray
 
   endtype KaolinArray
 
   contains
 
-  subroutine init_KaolinArray(this,shape,device)
+  subroutine create_KaolinArray(this,shape,device)
     class(KaolinArray),intent(inout) :: this
     integer,dimension(:),intent(in) :: shape
     type(KaolinDevice),intent(in) :: device
@@ -52,6 +52,6 @@ contains
       error stop "Invalid memory space"
     endselect
 
-  endsubroutine init_KaolinArray
+  endsubroutine create_KaolinArray
 
-endmodule kaolin_array_base
+endmodule kaolin_array

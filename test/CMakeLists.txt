@@ -43,5 +43,5 @@ function (add_fortran_tests)
 
 endfunction ()
 
-add_fortran_tests ( "allocate_kaolin_array.f90" )
+add_fortran_tests ( "create_kaolin_array_1d_x86_cpu.f90" )
 
