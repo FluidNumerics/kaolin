@@ -40,6 +40,7 @@ option(KAOLIN_ENABLE_TESTING "Option to enable build of tests. (Default On)"  ON
 # Fortran compiler requirements
 include(FortranCInterface)
 FortranCInterface_VERIFY()
+
 if(NOT FortranCInterface_VERIFIED_C)
 	message(FATAL_ERROR "Fortran compiler must support C Interface")
 endif(NOT FortranCInterface_VERIFIED_C)
@@ -93,42 +94,40 @@ elseif( "${CMAKE_Fortran_COMPILER_ID}" STREQUAL "NVHPC" )
 endif()
 
 
-message("-- KAOLIN Build System : Enabling GPU Support")
-set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DENABLE_GPU" )
-set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DENABLE_GPU" )
-set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DENABLE_GPU")
-set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DENABLE_GPU")
-set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DENABLE_GPU" )
+# message("-- KAOLIN Build System : Enabling GPU Support")
+# set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DENABLE_GPU" )
+# set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DENABLE_GPU" )
+# set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DENABLE_GPU")
+# set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DENABLE_GPU")
+# set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DENABLE_GPU" )
 
-# HIP (Optional)
-# IF HIP is found, we prefer HIP. IF HIP is not found, then we fall back to look for CUDA
-# only. If neither HIP nor CUDA are found, Cmake will error out.
-find_package(hip)
-if(hip_FOUND)
-        message("-- HIP found. Enabling HIP language.")
-        enable_language(HIP)
-        set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DHAVE_HIP" )
-        set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DHAVE_HIP" )
-        set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DHAVE_HIP")
-        set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DHAVE_HIP")
-        set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DHAVE_HIP" )
-        set( BACKEND_LIBRARIES hip::device)
-    else()
-        message( FATAL_ERROR "MPI installation is not GPU-aware" )
-    endif()
-else()
-    # CUDA
-    find_package(CUDAToolkit REQUIRED)
-    message("-- CUDA found. Enabling CUDA language.")
-    enable_language(CUDA)
-    set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DHAVE_CUDA" )
-    set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DHAVE_CUDA" )
-    set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DHAVE_CUDA")
-    set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DHAVE_CUDA")
-    set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DHAVE_CUDA" )
-    set( BACKEND_LIBRARIES CUDA::cuda_driver CUDA::cudart CUDA::cublas)
+# # HIP (Optional)
+# # IF HIP is found, we prefer HIP. IF HIP is not found, then we fall back to look for CUDA
+# # only. If neither HIP nor CUDA are found, Cmake will error out.
+# find_package(hip)
+# if(hip_FOUND)
+#     message("-- HIP found. Enabling HIP language.")
+#     enable_language(HIP)
+#     set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DHAVE_HIP" )
+#     set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DHAVE_HIP" )
+#     set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DHAVE_HIP")
+#     set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DHAVE_HIP")
+#     set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DHAVE_HIP" )
+#     set( BACKEND_LIBRARIES hip::device)
 
-endif()
+# else()
+#     # CUDA
+#     find_package(CUDAToolkit REQUIRED)
+#     message("-- CUDA found. Enabling CUDA language.")
+#     enable_language(CUDA)
+#     set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -DHAVE_CUDA" )
+#     set( CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -DHAVE_CUDA" )
+#     set( CMAKE_Fortran_FLAGS_COVERAGE "${CMAKE_Fortran_FLAGS_COVERAGE} -DHAVE_CUDA")
+#     set( CMAKE_Fortran_FLAGS_PROFILE "${CMAKE_Fortran_FLAGS_PROFILE} -DHAVE_CUDA")
+#     set( CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -DHAVE_CUDA" )
+#     set( BACKEND_LIBRARIES CUDA::cuda_driver CUDA::cudart CUDA::cublas)
+
+# endif()
 
 # ----- end dependencies ----- #
 

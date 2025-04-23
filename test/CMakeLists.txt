@@ -27,15 +27,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.21)
 
 set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
-set(make_env SELF_HOME=${CMAKE_BINARY_DIR} SELF_COMPILER=${SELF_COMPILER})
+set(make_env KAOLIN_HOME=${CMAKE_BINARY_DIR} KAOLIN_COMPILER=${KAOLIN_COMPILER})
 
 function (add_fortran_tests)
 
     foreach (TFILE ${ARGN})
         string (REGEX REPLACE ".f90$" "" TEST_NAME ${TFILE})
         add_executable (${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TFILE})
-        add_dependencies(${TEST_NAME} self)
-        target_link_libraries(${TEST_NAME} self)
+        add_dependencies(${TEST_NAME} kaolin)
+        target_link_libraries(${TEST_NAME} kaolin)
         target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_BINARY_DIR}/include)
         add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
         install(TARGETS ${TEST_NAME} DESTINATION test)

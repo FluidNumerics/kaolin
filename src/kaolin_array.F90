@@ -8,50 +8,70 @@ module kaolin_array
 
   private
   public :: KaolinArray
+  public :: Create_KaolinArray
 
-  type :: KaolinArray(prec,ndim)
-  integer,private,kind :: prec
+  type :: KaolinArray(prec)
+  integer,kind :: prec = real32
   integer,private :: ndim
-  integer,private :: shape(1:ndim)
+  integer,allocatable,private :: datashape(:)
   real(kind=prec),pointer :: data(:)
   type(KaolinDevice),private,pointer :: device
 
-contains
-
-  procedure,public :: create => create_KaolinArray
-
   endtype KaolinArray
+
+  interface Create_KaolinArray
+    module procedure Create_KaolinArray_real32
+    module procedure Create_KaolinArray_real64
+  endinterface
 
   contains
 
-  subroutine create_KaolinArray(this,shape,device)
-    class(KaolinArray),intent(inout) :: this
-    integer,dimension(:),intent(in) :: shape
-    type(KaolinDevice),intent(in) :: device
+  subroutine Create_KaolinArray_real32(this,datashape,device)
+    type(KaolinArray(real32)),intent(out) :: this
+    integer,dimension(:),intent(in) :: datashape
+    type(KaolinDevice),target,intent(in) :: device
 
-    if(.not. allocated(shape)) then
-      error stop "Shape must be allocated"
-    endif
-    if(size(shape) == 0) then
-      error stop "Shape must have at least one dimension"
-    endif
-    if(size(shape) .neq.this%ndim) then
-      error stop "Shape must have the same number of dimensions as the array"
-    endif
+    this%ndim = size(datashape)
 
     this%device => device
 
     select case(this%device%mem_space)
     case(kaolin_memory_cpu)
-      allocate(this%data(product(shape)))
+      allocate(this%data(product(datashape)))
     case(kaolin_memory_gpu)
-      call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
+      error stop "GPU memory allocation not implemented yet"
+      !call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
     case(kaolin_memory_apu)
-      call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
+      error stop "APU memory allocation not implemented yet"
+      !call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
     case default
       error stop "Invalid memory space"
     endselect
 
-  endsubroutine create_KaolinArray
+  endsubroutine Create_KaolinArray_real32
+
+  subroutine Create_KaolinArray_real64(this,datashape,device)
+    type(KaolinArray(real64)),intent(out) :: this
+    integer,dimension(:),intent(in) :: datashape
+    type(KaolinDevice),target,intent(in) :: device
+
+    this%ndim = size(datashape)
+
+    this%device => device
+
+    select case(this%device%mem_space)
+    case(kaolin_memory_cpu)
+      allocate(this%data(product(datashape)))
+    case(kaolin_memory_gpu)
+      error stop "GPU memory allocation not implemented yet"
+      !call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
+    case(kaolin_memory_apu)
+      error stop "APU memory allocation not implemented yet"
+      !call gpuCheck(gpuMalloc(c_loc(this%data),(product(shape)*this%prec)))
+    case default
+      error stop "Invalid memory space"
+    endselect
+
+  endsubroutine Create_KaolinArray_real64
 
 endmodule kaolin_array

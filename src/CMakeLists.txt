@@ -36,12 +36,11 @@ set_source_files_properties(
 set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
 
 add_library(kaolin SHARED ${KAOLIN_FSRC})
-target_link_libraries(self PUBLIC ${BACKEND_LIBRARIES})
+target_link_libraries(kaolin PUBLIC ${BACKEND_LIBRARIES})
 
 target_compile_options(kaolin PUBLIC -fPIC)    
 
 set_target_properties(kaolin PROPERTIES LINKER_LANGUAGE Fortran)
-set_target_properties(kaolin PROPERTIES PUBLIC_HEADER ${KAOLIN_HEADERS})
 
 install(TARGETS kaolin
         ARCHIVE DESTINATION lib
